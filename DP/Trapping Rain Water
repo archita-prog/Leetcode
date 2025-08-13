@@ -1,0 +1,25 @@
+class Solution {
+public:
+    int trap(vector<int>& height) {
+        int n = height.size();
+        if(n==0) return 0;
+        int l = 0;
+        int r = n-1;
+        int lMax = height[l];
+        int rMax = height[r];
+        int total = 0;
+        while(l<r){
+            if(lMax < rMax){
+                l++;
+                lMax = max(lMax , height[l]);
+                total += lMax - height[l];
+            }
+            else{
+                r--;
+                rMax = max(rMax, height[r]);
+                total += rMax - height[r];
+            }
+        } 
+        return total;    
+    }
+};
