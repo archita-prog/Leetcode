@@ -1,0 +1,40 @@
+class Solution {
+public:
+    bool isMatch(string s, string p) {
+        //pointers for s nad p
+        int i = 0;
+        int j = 0;
+        //last position of'*' in p
+        int starI = -1;
+        int match = 0;
+        while(i< s.size()){
+            if(j< p.size() && (p[j] == s[i] || p[j] == '?')){
+                i++;
+                j++;
+            }
+            //patten has *
+            else if(j<p.size() && p[j] == '*'){
+                starI = j;
+                match = i;
+                j++;
+            }
+            //last pattern was *
+            else if(starI != -1){
+                j = starI + 1;
+                match++;
+                i = match;
+            }
+            // no match *
+            else{
+                return false;
+            }
+        }
+        //skip any remaining * in pattern
+        while(j < p.size() && p[j] == '*'){
+            j++;
+        }
+        // if we have matched the whole pattern return true
+        return j == p.size();
+        
+    }
+};
