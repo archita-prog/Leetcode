@@ -1,0 +1,45 @@
+class Solution {
+public:
+    int largestRectangleArea(vector<int>& heights) {
+        stack<int> st;
+        int maxArea = 0;
+        int n = heights.size();
+
+        for (int i = 0; i <= n; i++) {
+            // Use 0 height at end to force stack emptying
+            while (!st.empty() && (i == n || heights[st.top()] >= heights[i])) {
+                int height = heights[st.top()];
+                st.pop();
+                int width = st.empty() ? i : i - st.top() - 1;
+                maxArea = max(maxArea, width * height);
+            }
+            st.push(i);
+        }
+
+        return maxArea;
+    }
+
+    int maximalRectangle(vector<vector<char>>& matrix) {
+        if (matrix.empty()) return 0;
+
+        int maxArea = 0;
+        int n = matrix[0].size();
+        vector<int> height(n, 0);
+
+        for (int i = 0; i < matrix.size(); i++) {
+            for (int j = 0; j < n; j++) {
+                // Update histogram height
+                if (matrix[i][j] == '1') {
+                    height[j]++;
+                } else {
+                    height[j] = 0;
+                }
+            }
+
+            int area = largestRectangleArea(height);
+            maxArea = max(maxArea, area);
+        }
+
+        return maxArea;
+    }
+};
