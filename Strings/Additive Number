@@ -1,0 +1,35 @@
+class Solution {
+public:
+    bool isAdditiveNumber(string num){
+        int n = num.size();
+        for(int i =1; i<=n/2;++i){
+            for(int j = 1; j<= (n-i)/2;++j){
+                string num1str = num.substr(0,i);
+                string num2str = num.substr(i,j);
+                if((num1str.size()>1 && num1str[0] == '0') || (num2str.size() > 1 && num2str[0] == '0')){
+                    continue;
+                }
+                long num1 = stol(num1str);
+                long num2 = stol(num2str);
+                if(isValid(num, i+j, num1,num2)){
+                    return true;
+                }
+            }
+        }
+        return false;
+        
+    }
+private:
+    bool isValid(const string& num, int start, long num1, long num2){
+        if(start == num.size()){
+            return true;
+        }
+        long sum = num1 + num2;
+        string sumstr = to_string(sum);
+        if(num.substr(start, sumstr.size()) == sumstr){
+            return isValid(num,start+ sumstr.size(), num2, sum);
+        }
+        return false;
+    }
+
+};
