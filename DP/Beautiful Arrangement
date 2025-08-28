@@ -1,0 +1,26 @@
+#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    void dfs(vector<bool>& used, int pos, int n, int& result) {
+        if (pos > n) {
+            result++;
+            return;
+        }
+        for (int i = 1; i <= n; i++) {
+            if (!used[i] && (pos % i == 0 || i % pos == 0)) {
+                used[i] = true;
+                dfs(used, pos + 1, n, result);
+                used[i] = false;
+            }
+        }
+    }
+
+    int countArrangement(int n) {
+        int result = 0;
+        vector<bool> used(n + 1, false); // 1-based indexing
+        dfs(used, 1, n, result);
+        return result;
+    }
+};
