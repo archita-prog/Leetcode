@@ -1,0 +1,49 @@
+
+class Solution {
+public:
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+        int n = numCourses;
+        int e = prerequisites.size();
+        
+        unordered_map<int, list<int>> adj;
+        for(int i = 0; i < e; i++) {
+            int u = prerequisites[i][0];
+            int v = prerequisites[i][1];
+            adj[u].push_back(v); // u -> v (u requires v)
+        }
+        
+        // Find all indegrees
+        vector<int> indegree(n, 0);
+        for(auto i : adj) {
+            for(auto j : i.second) {
+                indegree[j]++;
+            }
+        }
+        
+        // Push 0 indegree nodes to queue
+        queue<int> q;
+        for(int i = 0; i < n; i++) {
+            if(indegree[i] == 0) {
+                q.push(i);
+            }
+        }
+        
+        vector<int> ans;
+        while(!q.empty()) {
+            int front = q.front();
+            q.pop();
+            ans.push_back(front);
+            
+            // Update neighbor indegrees
+            for(auto neighbour : adj[front]) {
+                indegree[neighbour]--;
+                if(indegree[neighbour] == 0) {
+                    q.push(neighbour);
+                }
+            }
+        }
+        
+        // If we can topological sort all courses, return true (no cycle)
+        return ans.size() == n;
+    }
+};
