@@ -1,0 +1,56 @@
+
+class Solution {
+public:
+    vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
+        int n = numCourses;
+        
+        // Create adjacency list: course -> prerequisites
+        unordered_map<int, list<int>> adj;
+        for(int i = 0; i < prerequisites.size(); i++) {
+            int course = prerequisites[i][0];
+            int prereq = prerequisites[i][1];
+            adj[prereq].push_back(course); // prereq -> course
+        }
+        
+        // Calculate indegrees
+        vector<int> indegree(n, 0);
+        for(auto& pair : adj) {
+            for(int neighbor : pair.second) {
+                indegree[neighbor]++;
+            }
+        }
+        
+        // Push courses with 0 indegree to queue
+        queue<int> q;
+        for(int i = 0; i < n; i++) {
+            if(indegree[i] == 0) {
+                q.push(i);
+            }
+        }
+        
+        vector<int> result;
+        int count = 0;
+        
+        while(!q.empty()) {
+            int current = q.front();
+            q.pop();
+            result.push_back(current);
+            count++;
+            
+            // Update neighbors' indegrees
+            for(int neighbor : adj[current]) {
+                indegree[neighbor]--;
+                if(indegree[neighbor] == 0) {
+                    q.push(neighbor);
+                }
+            }
+        }
+        
+        // If we can't take all courses, return empty array
+        if(count != n) {
+            return {};
+        }
+        
+        return result;
+    }
+};
