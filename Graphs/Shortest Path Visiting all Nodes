@@ -1,0 +1,44 @@
+class Solution {
+public:
+    int shortestPathLength(vector<vector<int>>& graph) {
+        int n = graph.size();
+        if (n == 1) return 0;
+        
+        // We don't need to create adj list - graph is already adjacency list
+        // Use BFS with state (node, visited_mask)
+        queue<tuple<int, int, int>> q; // {node, mask, cost}
+        unordered_set<string> visited;
+        
+        // Start from every node
+        for (int i = 0; i < n; i++) {
+            int mask = 1 << i;
+            q.push({i, mask, 0});
+            visited.insert(to_string(i) + "," + to_string(mask));
+        }
+        
+        int allVisited = (1 << n) - 1;
+        
+        while (!q.empty()) {
+            auto [node, mask, cost] = q.front();
+            q.pop();
+            
+            // If all nodes are visited, return the cost
+            if (mask == allVisited) {
+                return cost;
+            }
+            
+            // Visit all neighbors
+            for (int neighbor : graph[node]) {
+                int newMask = mask | (1 << neighbor);
+                string state = to_string(neighbor) + "," + to_string(newMask);
+                
+                if (visited.find(state) == visited.end()) {
+                    visited.insert(state);
+                    q.push({neighbor, newMask, cost + 1});
+                }
+            }
+        }
+        
+        return -1;
+    }
+};
