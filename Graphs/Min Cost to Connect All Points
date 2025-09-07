@@ -1,0 +1,59 @@
+class Solution {
+public:
+    int minCostConnectPoints(vector<vector<int>>& points) {
+        int n = points.size();
+        
+        // Create adjacency list with Manhattan distances
+        vector<vector<pair<int, int>>> adj(n);
+        for(int i = 0; i < n; i++) {
+            for(int j = i + 1; j < n; j++) {
+                int dist = abs(points[i][0] - points[j][0]) + abs(points[i][1] - points[j][1]);
+                adj[i].push_back({j, dist});
+                adj[j].push_back({i, dist});
+            }
+        }
+        
+        // Prim's algorithm data structures
+        vector<int> key(n, INT_MAX);
+        vector<bool> mst(n, false);
+        vector<int> parent(n, -1);
+        
+        // Start from node 0
+        key[0] = 0;
+        
+        for(int count = 0; count < n; count++) {
+            // Find minimum key node not in MST
+            int u = -1;
+            int mini = INT_MAX;
+            for(int v = 0; v < n; v++) {
+                if(!mst[v] && key[v] < mini) {
+                    u = v;
+                    mini = key[v];
+                }
+            }
+            
+            if(u == -1) break;
+            
+            // Mark node as included in MST
+            mst[u] = true;
+            
+            // Update key values of adjacent nodes
+            for(auto& it : adj[u]) {
+                int v = it.first;
+                int w = it.second;
+                if(!mst[v] && w < key[v]) {
+                    key[v] = w;
+                    parent[v] = u;
+                }
+            }
+        }
+        
+        // Calculate total cost
+        int totalCost = 0;
+        for(int i = 0; i < n; i++) {
+            totalCost += key[i];
+        }
+        
+        return totalCost;
+    }
+};
