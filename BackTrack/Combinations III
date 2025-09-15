@@ -1,0 +1,27 @@
+class Solution {
+public:
+    void solve(int start, int k, int n, vector<int>& current,vector<vector<int>>& result){
+        //base case
+        if(current.size() == k && n==0){
+            result.push_back(current);
+            return ;
+        }
+        if(current.size() > k || n <0){
+            return; //backtrack
+        }
+        for(int i =start ; i<=9; ++i){
+            current.push_back(i); // add number to current combination
+            solve(i+1, k, n-i, current, result); // recurse with current number and update remaining sum
+            current.pop_back(); // remove the number and try the next possibilty
+
+        }
+    }
+    vector<vector<int>> combinationSum3(int k, int n) {
+        vector<vector<int>> result;
+        vector<int> current; // tracks current combination
+        solve(1,k,n,current,result);
+        return result;
+
+        
+    }
+};
