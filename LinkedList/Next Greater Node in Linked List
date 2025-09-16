@@ -1,0 +1,43 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    vector<int> nextLargerNodes(ListNode* head) {
+        vector<int> res;
+        while(head){
+            res.push_back(head->val);
+            head = head->next;
+        }
+
+        stack<int> st; // Stores elements in decreasing order (monotonically decreasing stack)
+        vector<int> result(res.size()); // To store the final answers
+
+        // Iterate from right to left
+        for(int i = res.size() - 1; i >= 0; i--){
+            int current_val = res[i];
+
+            // Pop elements from stack that are less than or equal to current_val
+            // These elements cannot be the "next larger" for any future element to their left
+            while(!st.empty() && st.top() <= current_val){
+                st.pop();
+            }
+
+            // If stack is empty, no larger element exists to the right, so result is 0
+            // Otherwise, the top of the stack is the next larger element
+            result[i] = st.empty() ? 0 : st.top();
+
+            // Push the current_val onto the stack
+            st.push(current_val);
+        }
+
+        return result;
+    }
+};
