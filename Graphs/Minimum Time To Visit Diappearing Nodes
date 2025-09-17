@@ -1,0 +1,42 @@
+class Solution {
+public:
+    vector<int> dis, vis;
+    unordered_map<int , vector<pair<int, int>>> gr;
+    void dijkstras(int src, vector<int>& disappear){
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+        pq.push({0, src});
+
+        while(!pq.empty()){
+            pair<int, int> best = pq.top();
+            pq.pop();
+
+            int d = best.first;
+            int node = best.second;
+
+            if(vis[node] || d>= disappear[node]) continue;
+
+            dis[node] = d;
+            vis[node] = 1;
+            for(auto ne : gr[node]){
+                if(vis[ne.first] == 0){
+                    pq.push({d + ne.second, ne.first});
+                }
+            }
+        }
+    }
+
+    vector<int> minimumTime(int n, vector<vector<int>>& edges, vector<int>& disappear) {
+        for(auto edge : edges){
+            int u = edge[0], v= edge[1], w= edge[2];
+            gr[u].push_back({v,w});
+            gr[v].push_back({u,w});
+
+        }
+        dis = vector<int>(n, -1), vis = vector<int>(n,0);
+        dijkstras(0, disappear);
+
+        return dis;
+        
+        
+    }
+};
