@@ -1,0 +1,95 @@
+class LRUCache {
+public:
+    class Node {
+    public:  // Make members public or provide access methods
+        int key, val;
+        Node* prev;
+        Node* next;
+
+        Node(int k, int v) {
+            key = k;
+            val = v;
+            prev = next = nullptr;
+        }
+    };
+
+    Node* head;
+    Node* tail;
+    unordered_map<int, Node*> m;
+    int limit;
+    int size;
+    
+    LRUCache(int capacity) {
+        limit = capacity;
+        size = 0;
+        head = new Node(-1, -1);
+        tail = new Node(-1, -1);
+        head->next = tail;
+        tail->prev = head;
+    }
+    
+    int get(int key) {
+        if (m.find(key) == m.end()) {
+            return -1;
+        }
+        Node* ansNode = m[key];
+        int ans = ansNode->val;
+        
+        // Remove from current position
+        delNode(ansNode);
+        // Add to front (most recently used)
+        addNode(ansNode);
+        
+        return ans;
+    }
+    
+    void addNode(Node* newNode) {
+        Node* oldNext = head->next;
+        head->next = newNode;
+        oldNext->prev = newNode;
+        newNode->next = oldNext;
+        newNode->prev = head;
+    }
+
+    void delNode(Node* oldNode) {
+        Node* oldPrev = oldNode->prev;
+        Node* oldNext = oldNode->next;
+        oldPrev->next = oldNext;
+        oldNext->prev = oldPrev;
+    }
+    
+    void put(int key, int value) {
+        if (m.find(key) != m.end()) {
+            // Key exists, update value and move to front
+            Node* existingNode = m[key];
+            existingNode->val = value;
+            delNode(existingNode);
+            addNode(existingNode);
+        } else {
+            // Key doesn't exist, create new node
+            if (size == limit) {
+                // Remove least recently used (tail->prev)
+                Node* lruNode = tail->prev;
+                m.erase(lruNode->key);
+                delNode(lruNode);
+                delete lruNode;
+                size--;
+            }
+            
+            Node* newNode = new Node(key, value);
+            addNode(newNode);
+            m[key] = newNode;
+            size++;
+        }
+    }
+    
+    // Destructor to clean up memory
+    ~LRUCache() {
+        Node* current = head;
+        while (current != nullptr) {
+            Node* next = current->next;
+            delete current;
+            current = next;
+        }
+    }
+};
