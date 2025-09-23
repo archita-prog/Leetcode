@@ -1,0 +1,25 @@
+class Solution {
+public:
+    string largestNumber(vector<int>& nums) {
+        vector<string> numStrs;
+        for(int num : nums){
+            numStrs.push_back(to_string(num));
+        }
+        //cutom sort: comapre a+b vs , b+a
+        sort(numStrs.begin(), numStrs.end(), [](const string& a , const string& b){
+            return a+b > b+a;
+
+        });
+        //concate all strings
+        string result;
+        for(const string& s: numStrs){
+            result += s;
+        }
+        if(result[0] == '0'){
+            return "0";
+        }
+        return result;
+
+        
+    }
+};
