@@ -1,0 +1,24 @@
+class Solution {
+public:
+    vector<string> topKFrequent(vector<string>& words, int k) {
+        unordered_map<string, int> freq;
+        for(const string& word : words){
+            freq[word]++;
+        }
+        //create a vector of unique strings
+        vector<string> uniqueWords;
+        for(const auto& pair : freq){
+            uniqueWords.push_back(pair.first);
+        }
+        //sort based on frequency and lexographical order
+        sort(uniqueWords.begin(), uniqueWords.end(), [&](const string& a, const string& b){
+            if(freq[a] == freq[b]){
+                return a <b;
+            }
+            return freq[a] > freq[b];
+        });
+        return vector<string>(uniqueWords.begin(), uniqueWords.begin() + k);
+        
+    }
+
+};
