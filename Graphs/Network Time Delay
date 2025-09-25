@@ -1,0 +1,45 @@
+class Solution {
+public:
+    int networkDelayTime(vector<vector<int>>& times, int n, int k) {
+        //create adjancy list
+        vector<vector<pair<int, int>>> graph(n+1);
+        for(const auto& time : times){
+            int u = time[0], v = time[1], w= time[2];
+            graph[u].push_back({v, w});
+        }
+        vector<int> dist(n+1, INT_MAX);
+        dist[k] = 0;
+
+        //min-heap
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+        pq.push({0,k});
+
+        while(!pq.empty()){
+            auto [currentDist, currentNode] = pq.top();
+            pq.pop();
+
+            if(currentDist > dist[currentNode]){
+                continue;
+            }
+            //explore neighbours
+            for(const auto& [neighbor, weight] : graph[currentNode]){
+                int newDist = currentDist + weight;
+
+                if(newDist < dist[neighbor]){
+                    dist[neighbor] = newDist;
+                    pq.push({newDist, neighbor});
+                }
+            }
+        }
+        int maxTime =0;
+        for(int i = 1; i<=n; i++){
+            if(dist[i] == INT_MAX){
+                return -1;
+            }
+            maxTime = max(maxTime, dist[i]);
+        }
+        return maxTime;
+        
+    }
+
+};
