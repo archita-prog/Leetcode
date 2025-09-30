@@ -1,0 +1,43 @@
+class Solution {
+public:
+    string reorganizeString(string s) {
+        unordered_map<char, int> freq;
+        for(char c: s) freq[c]++;
+
+        //max heap - pair<frequency, char>
+        priority_queue<pair<int, char>> maxHeap;
+        for(auto& [ch, count] : freq){
+            maxHeap.push({count, ch});
+        }
+        string result;
+
+        while(!maxHeap.empty()){
+            auto [count1, char1] = maxHeap.top();
+            maxHeap.pop();
+
+            //if last char in result is same as char1, we need a different char
+            if(!result.empty() && result.back() == char1){
+                if(maxHeap.empty()) return ""; // no other char to use
+
+                //get the next most frequent char
+                auto [count2, char2] = maxHeap.top();
+                maxHeap.pop();
+
+                result += char2;
+                count2--;
+                if(count2 > 0) maxHeap.push({count2, char2});
+
+                //push back char1 for next iteration
+                maxHeap.push({count1, char1});
+                
+            }
+            else{
+                    result += char1;
+                    count1--;
+                    if(count1 > 0 ) maxHeap.push({count1, char1});
+            }
+        }
+        return result;
+        
+    }
+};
