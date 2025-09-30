@@ -1,0 +1,51 @@
+class ExamRoom {
+private:
+    int n;
+    set<int> seats;
+public:
+    ExamRoom(int n) : n(n) {
+        
+    }
+    
+    int seat() {
+        if(seats.empty()){
+            seats.insert(0);
+            return 0;
+        }
+        int maxDist = *seats.begin(); //distance from start to first seat
+        int result =0;
+
+        //check gaps between occupied seats
+        auto prev = seats.begin();
+        for(auto it = next(seats.begin()); it != seats.end(); ++it){
+            int dist = (*it - *prev)/2;
+            if(dist > maxDist){
+                maxDist = dist;
+                result = *prev + dist;
+
+            }
+            prev = it;
+        }
+        //check distance from last seat to end
+        int lastDist = n-1- *seats.rbegin();
+        if(lastDist > maxDist){
+            result = n-1;
+        }
+        seats.insert(result);
+        return result;
+        
+    }
+
+    
+    void leave(int p) {
+        seats.erase(p);
+        
+    }
+};
+
+/**
+ * Your ExamRoom object will be instantiated and called as such:
+ * ExamRoom* obj = new ExamRoom(n);
+ * int param_1 = obj->seat();
+ * obj->leave(p);
+ */
