@@ -1,0 +1,80 @@
+class Solution {
+    unordered_map<string, vector<string>> predecessors;
+    vector<vector<string>> results;
+
+    void backtrack(string& beginWord, string& currentWord, vector<string>& path) {
+        if (currentWord == beginWord) {
+            vector<string> temp(path.rbegin(), path.rend());
+            results.push_back(temp);
+            return;
+        }
+        for (auto& pred : predecessors[currentWord]) {
+            path.push_back(pred);
+            backtrack(beginWord, pred, path);
+            path.pop_back();
+        }
+    }
+
+public:
+    vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {
+        unordered_set<string> wordSet(wordList.begin(), wordList.end());
+        results.clear();
+        predecessors.clear();
+
+        if (!wordSet.count(endWord)) return {}; // early exit if endWord not present
+
+        unordered_map<string, int> distances; 
+        distances[beginWord] = 0;
+
+        queue<string> q;
+        q.push(beginWord);
+
+        bool found = false;
+        int level = 0;
+        
+        while (!q.empty() && !found) {
+            level++;
+            int levelSize = q.size();
+            unordered_set<string> visitedThisLevel;
+            
+            for (int i = 0; i < levelSize; i++) {
+                string word = q.front();
+                q.pop();
+
+                string originalWord = word;
+                for (int pos = 0; pos < (int)word.size(); pos++) {
+                    char originalChar = word[pos];
+                    for (char c = 'a'; c <= 'z'; c++) {
+                        if (c == originalChar) continue;
+                        word[pos] = c;
+                        
+                        if (distances.count(word) && distances[word] == level) {
+                            // Same level: add this predecessor
+                            predecessors[word].push_back(originalWord);
+                        }
+                        
+                        if (wordSet.count(word) && !distances.count(word)) {
+                            distances[word] = level;
+                            predecessors[word].push_back(originalWord);
+                            visitedThisLevel.insert(word);
+                            q.push(word);
+                            if (word == endWord) found = true;
+                        }
+                    }
+                    word[pos] = originalChar;
+                }
+            }
+
+            for (auto& w : visitedThisLevel) {
+                wordSet.erase(w);
+            }
+        }
+
+        if (found) {
+            vector<string> path = {endWord};
+            backtrack(beginWord, endWord, path);
+        }
+
+        return results;
+    }
+};
