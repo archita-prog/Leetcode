@@ -1,0 +1,22 @@
+class Solution {
+public:
+    int flipLights(int n, int presses) {
+        if(presses == 0) return 1;
+
+        if(n == 1){
+            //only bulb 1 : B1, B3, B4 affect it, B2 doesn't
+            return 2;
+        }
+        if(n == 2){
+            if(presses == 1) return 3;
+            //with >= 2 presses: can reach all 4 states
+            return 4;
+        }
+        //for n >= 3
+        if(presses == 1) return 4;
+        if(presses == 2) return 7;
+        //with >= 3 presses, we can reach all 8 possible states
+
+        return 8;
+    }
+};
