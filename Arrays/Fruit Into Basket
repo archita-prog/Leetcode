@@ -1,0 +1,30 @@
+class Solution {
+public:
+    int totalFruit(vector<int>& fruits) {
+        int last = 1;
+        int secondLast = -1;
+        int lastCount =0;
+        int cur =0;
+        int ans =0;
+
+        for(int f: fruits){
+            if(f == last || f == secondLast){
+                cur++;
+            }
+            else{
+                cur = lastCount+1;
+            }
+            if(f == last){
+                lastCount++;
+            }
+            else{
+                lastCount =1;
+                secondLast = last;
+                last = f;
+            }
+            ans = max(ans, cur);
+        }
+        return ans;
+        
+    }
+};
