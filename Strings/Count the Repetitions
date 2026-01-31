@@ -1,0 +1,43 @@
+class Solution {
+public:
+    int getMaxRepetitions(string s1, int n1, string s2, int n2) {
+        int len1 = s1.size();
+        int len2 = s2.size();
+
+        unordered_map<int, pair<int, int>> memo;
+        int s1Count = 0;
+        int s2Count =0;
+        int index =0;
+
+        while(s1Count < n1){
+            for(char c: s1){
+                if(c == s2[index]){
+                    index++;
+                    if(index == len2){
+                        s2Count++;
+                        index =0;
+                    }
+                }
+            }
+            s1Count++;
+
+            if(memo.find(index) != memo.end()){
+                auto& prev = memo[index];
+                int prev_s1Count = prev.first;
+                int prev_s2Count = prev.second;
+
+                int cycleLen = s1Count - prev_s1Count;
+                int cycleCount = (n1 - prev_s1Count) / cycleLen;
+
+                s1Count = prev_s1Count + cycleCount * cycleLen;
+                s2Count = prev_s2Count + cycleCount * (s2Count -prev_s2Count);
+            }
+            memo[index] = {s1Count, s2Count};
+        }
+        return s2Count / n2;
+        
+
+
+        
+    }
+};
