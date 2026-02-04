@@ -1,0 +1,10 @@
+class Solution {
+public:
+    int numRabbits(vector<int>& answers) {
+        int freq[1000] = {0};
+        return accumulate(answers.begin(), answers.end(), 0, [&](int cnt, int x) mutable{
+            return cnt+= (freq[x]++%(x+1) == 0) *(x+1);
+        });
+        
+    }
+};
